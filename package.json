@@ -1,6 +1,6 @@
 {
   "name": "lumiflare-claude-context-generator",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Auto-generate Claude Code context files (REPOSITORY_OVERVIEW.md, feature_list.md, CLAUDE.md, agents) for any repository",
   "type": "module",
   "bin": {
