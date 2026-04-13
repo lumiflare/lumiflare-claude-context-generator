@@ -48,10 +48,38 @@ Read existing `docs/REPOSITORY_OVERVIEW.md` and add/fix:
 
 Read existing `docs/feature/feature_list.md` and add/fix:
 
-1. Replace "Estimated Feature" with **actual business logic** descriptions
-2. Add **dependency relationships** between features
-3. Add key **business rules** for each feature
-4. Update documentation status column
+1. Replace auto-estimated section/feature names with **actual business logic** descriptions
+2. Reorganize sections based on **dependency relationships** between features
+3. Add **sub-features and operations** as indented bullets under each feature
+4. Merge/remove unnecessary sections and add missing ones
+
+#### Format Rules
+
+feature_list.md must use the following bulleted list format (do not use tables):
+
+```markdown
+# Project Name — Feature List
+
+## 1. Feature Category
+
+- Feature name
+- Feature name
+- Feature name
+
+## 2. Feature Category
+
+- Feature name
+    - Sub-feature / operation
+    - Sub-feature / operation
+- Feature name
+    - Sub-feature / operation
+    - Sub-feature / operation
+    - Sub-feature / operation
+```
+
+- Use numbered `##` headers for feature categories
+- Use `-` bullets for each feature
+- Use 4-space indented `-` bullets for sub-features and operations
 
 ### Phase 4: Refine CLAUDE.md
 

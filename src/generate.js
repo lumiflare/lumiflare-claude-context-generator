@@ -255,6 +255,8 @@ function generateFeatureList(vars, analysis, locale) {
   lines.push(`> ${t.disclaimer.replace('{{today}}', vars.today)}`);
   lines.push('');
 
+  let sectionNum = 1;
+
   // Group controllers by directory
   const controllerGroups = {};
   for (const c of controllers) {
@@ -265,27 +267,23 @@ function generateFeatureList(vars, analysis, locale) {
   }
 
   if (Object.keys(controllerGroups).length > 0) {
-    lines.push(`## ${t.controllerFeatureMap}`);
-    lines.push('');
     for (const [group, ctrls] of Object.entries(controllerGroups).sort()) {
-      lines.push(`### ${group}`);
+      lines.push(`## ${sectionNum}. ${group}`);
       lines.push('');
-      lines.push(`| ${t.controller} | ${t.methods} | ${t.estimatedFeature} | ${t.documentation} |`);
-      lines.push('|---|---|---|---|');
       for (const c of ctrls) {
         const feature = guessFeature(c.name, fg);
-        const methodList = c.methods.slice(0, 5).join(', ');
-        const more = c.methods.length > 5 ? ` (+${c.methods.length - 5})` : '';
-        lines.push(`| ${c.name} | ${methodList}${more} | ${feature} | ${t.notCreated} |`);
+        lines.push(`- ${c.name} — ${feature}`);
+        for (const m of c.methods) {
+          lines.push(`    - ${m}`);
+        }
       }
       lines.push('');
+      sectionNum++;
     }
   }
 
   // Route-based feature map
   if (controllers.length === 0 && routes.length > 0) {
-    lines.push(`## ${t.routeFeatureMap}`);
-    lines.push('');
     const routeGroups = {};
     for (const r of routes) {
       const prefix = r.path.split('/').filter(Boolean)[0] || 'root';
@@ -293,13 +291,15 @@ function generateFeatureList(vars, analysis, locale) {
       routeGroups[prefix].push(r);
     }
     for (const [prefix, rts] of Object.entries(routeGroups).sort()) {
-      lines.push(`### /${prefix}`);
+      const feature = guessFeature(prefix, fg);
+      lines.push(`## ${sectionNum}. ${feature} (/${prefix})`);
       lines.push('');
-      lines.push(`| ${locale.overview.method} | ${locale.overview.path} | ${locale.overview.file} |`);
-      lines.push('|---|---|---|');
-      for (const r of rts.slice(0, 20)) lines.push(`| ${r.method} | \`${r.path}\` | \`${r.file}\` |`);
-      if (rts.length > 20) lines.push(`| ... | ${rts.length - 20} more | |`);
+      for (const r of rts.slice(0, 20)) {
+        lines.push(`- ${r.method} \`${r.path}\``);
+      }
+      if (rts.length > 20) lines.push(`- ... (${rts.length - 20} more)`);
       lines.push('');
+      sectionNum++;
     }
   }
 
@@ -307,19 +307,11 @@ function generateFeatureList(vars, analysis, locale) {
   if (models.length > 0) {
     lines.push(`## ${t.modelDomainMap}`);
     lines.push('');
-    lines.push(`| ${t.model} | ${locale.overview.file} | ${t.relatedFeature} |`);
-    lines.push('|---|---|---|');
-    for (const m of models) lines.push(`| ${m.name} | \`${m.file}\` | ${guessFeature(m.name, fg)} |`);
+    for (const m of models) {
+      lines.push(`- ${m.name} — ${guessFeature(m.name, fg)} (\`${m.file}\`)`);
+    }
     lines.push('');
   }
-
-  // Doc status
-  lines.push(`## ${t.docStatus}`);
-  lines.push('');
-  lines.push(`| ${t.featureName} | ${t.docPath} | ${t.status} |`);
-  lines.push('|---|---|---|');
-  lines.push(`| (${t.docStatusNote}) | | ${t.notCreated} |`);
-  lines.push('');
 
   return lines.join('\n');
 }
